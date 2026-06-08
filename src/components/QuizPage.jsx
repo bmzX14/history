@@ -111,18 +111,6 @@ export function QuizPage({ entries, seedEntryId, onBackToEntry, onReturnToLearni
     }
   };
 
-  useEffect(() => {
-    if (answer.length !== 4 || feedback.status !== "idle") {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      evaluateAnswer();
-    }, 180);
-
-    return () => window.clearTimeout(timer);
-  }, [answer, feedback.status, question]);
-
   const submitAnswer = (event) => {
     event.preventDefault();
     evaluateAnswer();
@@ -241,7 +229,7 @@ export function QuizPage({ entries, seedEntryId, onBackToEntry, onReturnToLearni
             autoComplete="off"
           />
           <span className="field-hint">
-            4자리 숫자를 입력하세요. 완성되면 자동으로 채점됩니다.
+            4자리 숫자를 입력한 뒤 Enter를 누르거나 버튼을 눌러 채점하세요.
           </span>
 
           <div className="quiz-actions">

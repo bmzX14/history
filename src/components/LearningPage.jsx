@@ -1,14 +1,21 @@
 import { EraFilterBar } from "./learning/EraFilterBar";
 import { EventDetailPanel } from "./learning/EventDetailPanel";
+import { SearchBar } from "./learning/SearchBar";
 import { TimelineRail } from "./learning/TimelineRail";
+import { matchesKoreanSearch } from "./learning/searchUtils";
 
 export function LearningPage({
   eras,
   activeEra,
   activeEntry,
   activeEntryId,
+  searchInput,
+  searchQuery,
   yearGroups,
   onChangeEra,
+  onChangeSearchInput,
+  onClearSearch,
+  onSubmitSearch,
   onSelectEntry,
   onStartQuiz
 }) {
@@ -29,16 +36,21 @@ export function LearningPage({
     );
   }
 
-  const visibleGroups =
-    activeEra === "all"
-      ? yearGroups
-      : yearGroups.filter((g) => g.era === activeEra);
+  const visibleGroups = yearGroups
+    .filter((group) => activeEra === "all" || group.era === activeEra)
+    .map((group) => ({
+      ...group,
+      entries: group.entries.filter((entry) =>
+        matchesKoreanSearch(entry, group, searchQuery)
+      )
+    }))
+    .filter((group) => group.entries.length > 0);
 
   const allVisibleEntries = visibleGroups.flatMap((g) => g.entries);
   const activeInView =
     allVisibleEntries.find((e) => e.id === activeEntryId) ??
     allVisibleEntries[0] ??
-    activeEntry;
+    null;
 
   return (
     <section className="page page--learning">
@@ -73,18 +85,41 @@ export function LearningPage({
         onChangeEra={onChangeEra}
       />
 
-      <div className="learning-layout">
-        <TimelineRail
-          yearGroups={visibleGroups}
-          activeEntryId={activeInView?.id}
-          onSelectEntry={onSelectEntry}
-        />
+      <SearchBar
+        value={searchInput}
+        searchQuery={searchQuery}
+        onChange={onChangeSearchInput}
+        onClear={onClearSearch}
+        onSubmit={onSubmitSearch}
+        resultCount={allVisibleEntries.length}
+      />
 
-        <EventDetailPanel
-          event={activeInView}
-          onStartQuiz={onStartQuiz}
-        />
-      </div>
+      {allVisibleEntries.length ? (
+        <div className="learning-layout">
+          <TimelineRail
+            yearGroups={visibleGroups}
+            activeEntry={activeInView}
+            activeEntryId={activeInView?.id}
+            highlightQuery={searchQuery}
+            onSelectEntry={onSelectEntry}
+            onStartQuiz={onStartQuiz}
+          />
+
+          <EventDetailPanel
+            event={activeInView}
+            highlightQuery={searchQuery}
+            onStartQuiz={onStartQuiz}
+          />
+        </div>
+      ) : (
+        <div className="empty-state search-empty-state">
+          <p className="eyebrow">검색 결과 없음</p>
+          <h2>입력한 한국어 단어와 일치하는 사건을 찾지 못했습니다.</h2>
+          <p>
+            다른 어휘를 입력하거나 시대 필터를 `전체 시대`로 바꿔 다시 찾아보세요.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

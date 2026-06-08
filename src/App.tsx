@@ -19,6 +19,8 @@ const allEntries = timelineEvents.flatMap((group) =>
 export default function App() {
   const [mode, setMode] = useState<ModeId>("learn");
   const [activeEra, setActiveEra] = useState("all");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeEntryId, setActiveEntryId] = useState<string | null>(
     allEntries[0]?.id ?? null
   );
@@ -47,8 +49,16 @@ export default function App() {
             activeEra={activeEra}
             activeEntry={activeEntry}
             activeEntryId={activeEntryId}
+            searchInput={searchInput}
+            searchQuery={searchQuery}
             yearGroups={timelineEvents}
             onChangeEra={setActiveEra}
+            onChangeSearchInput={setSearchInput}
+            onClearSearch={() => {
+              setSearchInput("");
+              setSearchQuery("");
+            }}
+            onSubmitSearch={() => setSearchQuery(searchInput.trim())}
             onSelectEntry={setActiveEntryId}
             onStartQuiz={startQuizFromEntry}
           />
@@ -59,6 +69,8 @@ export default function App() {
             onBackToEntry={(entryId) => {
               setActiveEntryId(entryId);
               setActiveEra("all");
+              setSearchInput("");
+              setSearchQuery("");
               setMode("learn");
             }}
             onReturnToLearning={() => setMode("learn")}
