@@ -45,7 +45,7 @@ export function LearningPage({
       <div className="hero-panel">
         <div className="hero-copy">
           <p className="eyebrow">학습 모드</p>
-          <h2>명지대의 외국인학생을 위한<br />한국 현대사 수업 학습</h2>
+          <h2>외국인학생을 위한<br />한국 현대사 수업 학습</h2>
           <p>
             타임라인의 각 사건을 살펴보고, 기억이 생생할 때 바로 짧은 퀴즈에 도전해 보세요.
           </p>
