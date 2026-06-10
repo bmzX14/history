@@ -1,10 +1,24 @@
 import { useEffect, useState } from "react";
 
+const COMPACT_ENTER_SCROLL = 140;
+const COMPACT_EXIT_SCROLL = 80;
+
 export function Header({ modes, activeMode, onChangeMode }) {
   const [isCompact, setIsCompact] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsCompact(window.scrollY > 80);
+    const handleScroll = () => {
+      const nextScrollY = window.scrollY;
+
+      setIsCompact((current) => {
+        if (current) {
+          return nextScrollY > COMPACT_EXIT_SCROLL;
+        }
+
+        return nextScrollY > COMPACT_ENTER_SCROLL;
+      });
+    };
+
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
