@@ -1,4 +1,4 @@
-# Korean Modern History Starter
+# Korean Contemporary History Starter
 
 Starter app React + JavaScript for a learning website about modern Korean history from 1945 to the present.
 
